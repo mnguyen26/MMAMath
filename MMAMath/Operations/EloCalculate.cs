@@ -190,7 +190,6 @@ namespace MMAMath.Operations.EloCalculate
                 fighterPeakEloTable.Add(fighterPeakElo.Name, fighterPeakEloDetails);
             }
 
-            //var orderedElo = fighterPeakEloTable.OrderByDescending(f => f.Value).ToDictionary(f => f.Key, f => f.Value);
             var orderedElo = fighterPeakEloTable.OrderByDescending(t => t.Value.Elo).ToDictionary(t => t.Key, t => t.Value);
 
             SaveFighterPeakEloRecords(orderedElo);

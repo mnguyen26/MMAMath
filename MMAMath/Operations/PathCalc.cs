@@ -5,20 +5,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
+using System.Net;
 
 namespace MMAMath.Operations.PathCalc
 {
     public class PathCalc
     {
         private string _allFightsJSONPath;
-        private string _fighterEloRecordspath;
+        private string _fighterPeakEloPath;
         private Dictionary<string, List<string>> _adjacencyList;
         private Dictionary<string, int> _fighterPeakElo;
 
-        public PathCalc(string allFightsJSONPath, string fighterEloRecordsPath)
+        public PathCalc(string allFightsJSONPath, string fighterPeakEloPath)
         {
             _allFightsJSONPath = allFightsJSONPath;
-            _fighterEloRecordspath = fighterEloRecordsPath;
+            _fighterPeakEloPath = fighterPeakEloPath;
+            //_fighterEloRecordspath = fighterEloRecordsPath;
             _adjacencyList = new Dictionary<string, List<string>>();
 
             BuildGraph();
@@ -99,6 +101,27 @@ namespace MMAMath.Operations.PathCalc
             }
 
             return null;
+        }
+
+        public List<List<string>> MapConnectedHighestElo(string startFighter, int numFighters)
+        {
+            var highestEloPaths = new List<List<string>>();
+
+            string jsonString = File.ReadAllText(_fighterPeakEloPath);
+            var fightersPeakElo = JsonSerializer.Deserialize<Dictionary<string, FighterPeakEloDetails>>(jsonString);
+
+            foreach(string fighter in fightersPeakElo.Keys)
+            {
+                var path = FindShortestPath(startFighter, fighter);
+                if (path != null)
+                {
+                    highestEloPaths.Add(path);
+                    numFighters--;
+                }
+                if (numFighters == 0) { break; }
+            }
+
+            return highestEloPaths;
         }
     }
 }
