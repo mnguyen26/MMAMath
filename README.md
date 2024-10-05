@@ -1,6 +1,6 @@
 We all know that MMA math doesn't work in real life. If Fighter A beats Fighter B, and Fighter B beats Fighter C, it doesn’t mean Fighter A will automatically beat Fighter C. Fighting ability isn't a one-dimensional trait, and matchups can be nontransitive. Styles make fights, and we've seen rock-paper-scissors scenarios like Ronda Rousey beating Misha Tate, Holly Holm defeating Ronda Rousey, and Misha Tate beating Holly Holm (Matt Hughes, Georges St-Pierre, and B.J. Penn is another example).
 
-This project takes the idea of MMA math to its most absurd degree. Using fight results from UFC history, I've assigned fighters Elo scores (a ranking system originally developed for chess) and built a graph that connects fighters by their wins. The project lets you find the paths (if they exists) between any given fighter and the highest-rated fighters of all time, according to peak Elo scores.
+Because I still see this type of logic in MMA forums, this project takes the idea of MMA math to its most absurd degree. Using fight results from UFC history, I've assigned fighters Elo scores (a ranking system originally developed for chess) and built a graph that connects fighters by their wins. The project lets you find the paths (if they exists) between any given fighter and the highest-rated fighters of all time, according to peak Elo scores.
 
 Assumptions & Simplifications:
 
