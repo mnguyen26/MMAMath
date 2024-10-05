@@ -1,40 +1,14 @@
 ﻿using System.Globalization;
 using System.Text.Json;
-using System.Xml.Linq;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 
-namespace MMAMath.Scraper
+using MMAMath.Models;
+
+namespace MMAMath.Operations.Scraper
 {
     public class Scraper
     {
-        public class EventDetails
-        {
-            public string Name { get; set; }
-            public DateTime Date { get; set; }
-            public string Link { get; set; }
-        }
-
-        public class  FightDetails
-        {
-            public string FighterA { get; set; }
-            public string FighterB { get; set; }
-            public string FighterAResult {  get; set; }
-            public string FighterBResult {  get; set; }
-            public string Method {  get; set; }
-            public string? Score { get; set; }
-            public DateTime Date { get; set; }
-            public string Id
-            {
-                get
-                {
-                    var fighters = new[] { FighterA, FighterB }.OrderBy(f => f).ToArray();
-                    string idString = $"{fighters[0]}_{fighters[1]}_{Date:yyyy-MM-dd}";
-                    return idString;
-                }
-            }
-        }
-
         public const string BaseUrl = "https://www.tapology.com/fightcenter/promotions/1-ultimate-fighting-championship-ufc";
 
         private static int GetEventsLastPage(string url)
@@ -45,7 +19,7 @@ namespace MMAMath.Scraper
             var lastLinkNode = document.DocumentNode
             .SelectSingleNode("//h3[@id='events']//span[@class='last']/a");
             string lastLink = lastLinkNode.GetAttributeValue("href", string.Empty);
-            int lastPage = Int32.Parse(lastLink.Split('=')[1]);
+            int lastPage = int.Parse(lastLink.Split('=')[1]);
 
             return lastPage;
         }
@@ -110,7 +84,7 @@ namespace MMAMath.Scraper
                 }
 
             }
-            
+
             return eventList;
         }
 
@@ -124,13 +98,13 @@ namespace MMAMath.Scraper
             DateTime eventDateTime;
             try
             {
-                eventDateTime = DateTime.ParseExact(dateTimeString, "dddd MM.dd.yyyy 'at' hh:mm tt ET", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None);
+                eventDateTime = DateTime.ParseExact(dateTimeString, "dddd MM.dd.yyyy 'at' hh:mm tt ET", CultureInfo.InvariantCulture, DateTimeStyles.None);
             }
             catch
             {
                 eventDateTime = DateTime.MaxValue;
             }
-            
+
 
             return eventDateTime;
         }
@@ -150,7 +124,8 @@ namespace MMAMath.Scraper
             }
         }
 
-        private static List<EventDetails> GetEventDetailsFromFile() {
+        private static List<EventDetails> GetEventDetailsFromFile()
+        {
             string filePath = Path.Combine(AppContext.BaseDirectory, "ufc_events.json");
             string jsonString = File.ReadAllText(filePath);
             List<EventDetails> eventList = JsonConvert.DeserializeObject<List<EventDetails>>(jsonString);
@@ -169,7 +144,7 @@ namespace MMAMath.Scraper
             if (liNodes != null)
             {
                 var liNodesFightOrder = liNodes.Reverse();
-                foreach ( var li in liNodesFightOrder)
+                foreach (var li in liNodesFightOrder)
                 {
                     var fighterNodes = li.SelectNodes(".//div[contains(@class, 'md:flex') and (contains(@class, 'order-1') or contains(@class, 'order-2'))]/a");
                     string fighterA = "";
@@ -262,17 +237,17 @@ namespace MMAMath.Scraper
             int i = 0;
             foreach (var currEvent in eventsSorted)
             {
-                if (currEvent.Date < DateTime.UtcNow)
+                if (new DateTime (2024, 07, 20) < currEvent.Date && currEvent.Date < DateTime.UtcNow)
                 {
                     Thread.Sleep(1000);
                     allFights.AddRange(GetFightsFromPage(currEvent.Link, currEvent.Date));
-                    
-                    if (i%100 == 0)
+
+                    if (i % 10 == 0)
                     {
                         SaveFightsToJson(allFights);
                     }
+                    i++;
                 }
-                i++;
             }
 
             return allFights;
