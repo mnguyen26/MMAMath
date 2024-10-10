@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-
+using Microsoft.VisualBasic;
 using MMAMath.Models;
 
 namespace MMAMath.Operations.EloCalculate
@@ -26,21 +22,31 @@ namespace MMAMath.Operations.EloCalculate
             _allFightersEloTable = new Dictionary<string, List<FighterEloRow>>();
         }
 
-        private int[] CalculateElo(int fighterAElo, int fighterBElo, string fighterAResult, string fighterBResult)
+        private int[] CalculateElo(int fighterAElo, int fighterBElo, string fighterAResult, string fighterBResult, string method)
         {
             double k = 32;
 
             double fighterAExpectedResult = 1 / (1 + Math.Pow(10, ((fighterBElo - fighterAElo) / 400.0)));
             double fighterBExpectedResult = 1 / (1 + Math.Pow(10, ((fighterAElo - fighterBElo) / 400.0)));
 
+            double winAdjustment = 0;
+            if (method.Contains("KO") || method.Contains("Submission")) { winAdjustment = 0; }
+            else if (method.Contains("Decision"))
+            {
+                if (method.Contains("Unanimous")) { winAdjustment = .1; }
+                else if (method.Contains("Majority")) { winAdjustment = .2; }
+                else if (method.Contains("Split")) { winAdjustment = .3; }
+            }
+            else if (method.Contains("Disqualification")) { winAdjustment = .45; }
+
             double AResult = 0;
             switch(fighterAResult)
             {
                 case "W":
-                    AResult = 1;
+                    AResult = 1 - winAdjustment;
                     break;
                 case "L":
-                    AResult = 0;
+                    AResult = 0 + winAdjustment;
                     break;
                 case "D":
                     AResult = 0.5;
@@ -51,10 +57,10 @@ namespace MMAMath.Operations.EloCalculate
             switch(fighterBResult)
             {
                 case "W":
-                    BResult = 1;
+                    BResult = 1 - winAdjustment;
                     break;
                 case "L":
-                    BResult = 0;
+                    BResult = 0 + winAdjustment;
                     break;
                 case "D":
                     BResult = 0.5;
@@ -81,6 +87,23 @@ namespace MMAMath.Operations.EloCalculate
             string jsonString = System.Text.Json.JsonSerializer.Serialize(fighterPeakEloTable, new JsonSerializerOptions { WriteIndented = true });
 
             File.WriteAllText(filePath, jsonString);
+        }
+
+        public void ListUniqueMethods()
+        {
+            string jsonString = File.ReadAllText(_allFightsJSONPath);
+            var allFights = JsonSerializer.Deserialize<List<FightDetails>>(jsonString);
+            var uniqueMethods = allFights.Select(f => f.Method).Distinct().ToList();
+            uniqueMethods = uniqueMethods.OrderBy(m => m).ToList();
+
+            StringBuilder csvContent = new StringBuilder();
+            foreach (var method in uniqueMethods)
+            {
+                csvContent.AppendLine(method);
+            }
+
+            string filePath = Path.Combine(AppContext.BaseDirectory, "methods.csv");
+            File.WriteAllText(filePath, csvContent.ToString());
         }
 
         public void GenerateEloAllFighters()
@@ -136,7 +159,7 @@ namespace MMAMath.Operations.EloCalculate
                         });
                     }
 
-                    var newElos = CalculateElo(fighterACurrElo, fighterBCurrElo, currFight.FighterAResult, currFight.FighterBResult);
+                    var newElos = CalculateElo(fighterACurrElo, fighterBCurrElo, currFight.FighterAResult, currFight.FighterBResult, currFight.Method);
 
                     var lastFightA = _allFightersEloTable[currFight.FighterA][_allFightersEloTable[currFight.FighterA].Count-1];
                     _allFightersEloTable[currFight.FighterA].Add(new FighterEloRow

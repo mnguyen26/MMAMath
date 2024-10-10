@@ -1,11 +1,5 @@
 ﻿using MMAMath.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.Json;
-using System.Net;
 
 namespace MMAMath.Operations.PathCalc
 {
@@ -20,10 +14,10 @@ namespace MMAMath.Operations.PathCalc
         {
             _allFightsJSONPath = allFightsJSONPath;
             _fighterPeakEloPath = fighterPeakEloPath;
-            //_fighterEloRecordspath = fighterEloRecordsPath;
             _adjacencyList = new Dictionary<string, List<string>>();
 
             BuildGraph();
+            SaveGraph();
         }
 
         private void AddEdge(string fighter1, string fighter2)
@@ -64,6 +58,14 @@ namespace MMAMath.Operations.PathCalc
                     AddEdge(fight.FighterB, fight.FighterA);
                 }
             }
+        }
+
+        private void SaveGraph()
+        {
+            string filePath = Path.Combine(AppContext.BaseDirectory, "fighter_wins_graph.json");
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(_adjacencyList, new JsonSerializerOptions { WriteIndented = true });
+
+            File.WriteAllText(filePath, jsonString);
         }
 
         public List<string> FindShortestPath(string startFighter, string targetFighter)

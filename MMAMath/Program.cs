@@ -33,12 +33,6 @@ void ExecuteMenuItem(string input)
         case "4":
             PerformPeakEloCalculation();
             break;
-        case "5":
-            FindShortestPath();
-            break;
-        case "6":
-            FindPathsToHighestElo();
-            break;
         default:
             Console.WriteLine("Invalid choice. Try again.");
             break;
