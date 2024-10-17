@@ -55,4 +55,10 @@ namespace MMAMath.Models
         public string LastOpp {  get; set; }
     }
 
+    public class FighterPics
+    {
+        public string Name { get; set; }
+        public string PicURL { get; set; }
+    }
+
 }

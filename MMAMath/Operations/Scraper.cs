@@ -253,11 +253,11 @@ namespace MMAMath.Operations.Scraper
             return allFights;
         }
 
-        public static async Task<List<string>> GetAllFighterNames()
+        public static async Task<List<FighterPics>> GetAllFighterPics()
         {
             int page = 0;
             bool moreFighters = true;
-            var fighterNames = new List<string>();
+            var fightersAndPics = new List<FighterPics>();
 
             while (moreFighters)
             {
@@ -300,28 +300,39 @@ namespace MMAMath.Operations.Scraper
                             var fighterDoc = new HtmlDocument();
                             fighterDoc.LoadHtml(innerHtml);
 
+                            var fighterAndPic = new FighterPics();
+
                             var nameNode = fighterDoc.DocumentNode.SelectSingleNode("//span[contains(@class, 'c-listing-athlete__name')]");
                             if (nameNode != null)
                             {
                                 string fighterName = nameNode.InnerText.Trim();
-                                fighterNames.Add(fighterName);
+                                fighterAndPic.Name = fighterName;
                             }
+
+                            var imageNode = node.SelectSingleNode(".//img");
+                            if (imageNode != null)
+                            {
+                                string picURL = imageNode.GetAttributeValue("src", string.Empty);
+                                fighterAndPic.PicURL = picURL;
+                            }
+
+                            fightersAndPics.Add(fighterAndPic);
                         }
+                    }
+                    else
+                    {
+                        moreFighters = false;
                     }
                 }
                 page++;
             }
 
-            string filePath = Path.Combine(AppContext.BaseDirectory, "ufc_fighters.csv");
-            using (var file = File.CreateText(filePath))
-            {
-                foreach (var name in fighterNames)
-                {
-                    file.WriteLine(string.Join(",", name));
-                }
-            }
+            string filePath = Path.Combine(AppContext.BaseDirectory, "fighter_pics.json");
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(fightersAndPics, new JsonSerializerOptions { WriteIndented = true });
 
-            return fighterNames;
+            File.WriteAllText(filePath, jsonString);
+
+            return fightersAndPics;
         }
 
         public static void SaveEvents()
