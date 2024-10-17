@@ -253,6 +253,77 @@ namespace MMAMath.Operations.Scraper
             return allFights;
         }
 
+        public static async Task<List<string>> GetAllFighterNames()
+        {
+            int page = 0;
+            bool moreFighters = true;
+            var fighterNames = new List<string>();
+
+            while (moreFighters)
+            {
+                string url = $"https://www.ufc.com/views/ajax?gender=All&search=&view_name=all_athletes&view_display_id=page&view_args=&view_path=%2Fathletes%2Fall&view_base_path=&view_dom_id=4e9bde8cc3decb72663fbd77ebbfc57c161687ca98d905dc7f6f212900374ab0&pager_element=0&page={page}&ajax_page_state%5Btheme%5D=ufc&ajax_page_state%5Btheme_token%5D=&ajax_page_state%5Blibraries%5D=some-libraries";
+
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Add("Accept", "application/json, text/javascript, */*; q=0.01");
+                    client.DefaultRequestHeaders.Add("Referer", "https://www.ufc.com/");
+
+                    HttpResponseMessage response;
+                    string responseBody = "";
+                    try
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(1));
+                        response = await client.GetAsync(url);
+                        response.EnsureSuccessStatusCode();
+                        responseBody = await response.Content.ReadAsStringAsync();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        moreFighters = false;
+                    }
+
+                    var jsonArray = System.Text.Json.JsonSerializer.Deserialize<List<JsonElement>>(responseBody);
+
+                    var targetObject = jsonArray.Find(obj => obj.GetProperty("command").ToString() == "insert");
+                    var data = targetObject.GetProperty("data").GetString();
+
+                    HtmlDocument doc = new HtmlDocument();
+                    doc.LoadHtml(data);
+
+                    var fighterNodes = doc.DocumentNode.SelectNodes("//div[contains(@class, 'view-items-wrp')]//div[contains(@class, 'c-listing-athlete-flipcard__inner')]");
+                    if (fighterNodes != null)
+                    {
+                        foreach (var node in fighterNodes)
+                        {
+                            string innerHtml = node.InnerHtml;
+                            var fighterDoc = new HtmlDocument();
+                            fighterDoc.LoadHtml(innerHtml);
+
+                            var nameNode = fighterDoc.DocumentNode.SelectSingleNode("//span[contains(@class, 'c-listing-athlete__name')]");
+                            if (nameNode != null)
+                            {
+                                string fighterName = nameNode.InnerText.Trim();
+                                fighterNames.Add(fighterName);
+                            }
+                        }
+                    }
+                }
+                page++;
+            }
+
+            string filePath = Path.Combine(AppContext.BaseDirectory, "ufc_fighters.csv");
+            using (var file = File.CreateText(filePath))
+            {
+                foreach (var name in fighterNames)
+                {
+                    file.WriteLine(string.Join(",", name));
+                }
+            }
+
+            return fighterNames;
+        }
+
         public static void SaveEvents()
         {
             var lastPage = GetEventsLastPage(BaseUrl);
