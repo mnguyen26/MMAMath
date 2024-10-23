@@ -229,6 +229,7 @@ namespace MMAMath.Operations.Scraper
             }
         }
 
+        //MMN fix Bruno Silva
         private static List<FightDetails> GetAllFights(List<EventDetails> events)
         {
             List<FightDetails> allFights = new List<FightDetails>();

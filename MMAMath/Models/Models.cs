@@ -61,4 +61,10 @@ namespace MMAMath.Models
         public string PicURL { get; set; }
     }
 
+    public class FighterWinNode
+    {
+        public string Opponent { get; set; }
+        public DateTime Date { get; set; }
+    }
+
 }

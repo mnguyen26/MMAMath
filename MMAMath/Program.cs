@@ -9,8 +9,7 @@ void ShowMenu()
     Console.WriteLine("2. Scrape fights from Tapology");
     Console.WriteLine("3. Calculate Elo scores");
     Console.WriteLine("4. Calculate Peak Elo Scores");
-    Console.WriteLine("5. MMA Math: Shortest Path");
-    Console.WriteLine("6. MMA Math: Paths to Highest Elo");
+    Console.WriteLine("5. Generate Wins Graph");
     Console.WriteLine("0. Exit");
     Console.WriteLine("Enter your choice:");
 }
@@ -32,6 +31,9 @@ void ExecuteMenuItem(string input)
             break;
         case "4":
             PerformPeakEloCalculation();
+            break;
+        case "5":
+            GenerateWinGraph();
             break;
         default:
             Console.WriteLine("Invalid choice. Try again.");
@@ -55,59 +57,66 @@ void PerformPeakEloCalculation()
     peakEloCalculate.GetFightersPeakElo(path);
 }
 
-void FindShortestPath()
+void GenerateWinGraph()
 {
-    Console.WriteLine("Enter path for ufc_fights.json:");
+    Console.WriteLine("Enter path for ufc_fights.json");
     var fightsPath = Console.ReadLine();
     var pathCalc = new PathCalc(fightsPath, "");
-    Console.WriteLine("Enter first fighter:");
-    var fighter1 = Console.ReadLine();
-    Console.WriteLine("Enter second fighter:");
-    var fighter2 = Console.ReadLine();
-
-    var shortestPath = pathCalc.FindShortestPath(fighter1, fighter2);
-    if (shortestPath != null)
-    {
-        foreach (var fighter in shortestPath)
-        {
-            Console.WriteLine($"{fighter} beat -->");
-        }
-    }
-    else
-    {
-        Console.WriteLine("No path found.");
-    }
 }
 
-void FindPathsToHighestElo()
-{
-    Console.WriteLine("Enter path for ufc_fights.json:");
-    var allFightsPath = Console.ReadLine();
-    Console.WriteLine("Enter path for fighter_peak_elo_records.json:");
-    var fightersPeakElo = Console.ReadLine();
-    var pathCalc = new PathCalc(allFightsPath, fightersPeakElo);
+//void FindShortestPath()
+//{
+//    Console.WriteLine("Enter path for ufc_fights.json:");
+//    var fightsPath = Console.ReadLine();
+//    var pathCalc = new PathCalc(fightsPath, "");
+//    Console.WriteLine("Enter first fighter:");
+//    var fighter1 = Console.ReadLine();
+//    Console.WriteLine("Enter second fighter:");
+//    var fighter2 = Console.ReadLine();
 
-    Console.WriteLine("Enter start fighter:");
-    var startFighter = Console.ReadLine();
-    Console.WriteLine("Enter number of fighters to connect:");
+//    var shortestPath = pathCalc.FindShortestPath(fighter1, fighter2);
+//    if (shortestPath != null)
+//    {
+//        foreach (var fighter in shortestPath)
+//        {
+//            Console.WriteLine($"{fighter} beat -->");
+//        }
+//    }
+//    else
+//    {
+//        Console.WriteLine("No path found.");
+//    }
+//}
+
+//void FindPathsToHighestElo()
+//{
+//    Console.WriteLine("Enter path for ufc_fights.json:");
+//    var allFightsPath = Console.ReadLine();
+//    Console.WriteLine("Enter path for fighter_peak_elo_records.json:");
+//    var fightersPeakElo = Console.ReadLine();
+//    var pathCalc = new PathCalc(allFightsPath, fightersPeakElo);
+
+//    Console.WriteLine("Enter start fighter:");
+//    var startFighter = Console.ReadLine();
+//    Console.WriteLine("Enter number of fighters to connect:");
     
-    if (int.TryParse(Console.ReadLine(), out int numFighters))
-    {
-        var result = pathCalc.MapConnectedHighestElo(startFighter, numFighters);
-        foreach (var path in result)
-        {
-            foreach (var fighter in path)
-            {
-                Console.WriteLine($"{fighter} defeated -->");
-            }
-            Console.WriteLine();
-        }
-    }
-    else
-    {
-        Console.WriteLine("Invalid number of fighters.");
-    }
-}
+//    if (int.TryParse(Console.ReadLine(), out int numFighters))
+//    {
+//        var result = pathCalc.MapConnectedHighestElo(startFighter, numFighters);
+//        foreach (var path in result)
+//        {
+//            foreach (var fighter in path)
+//            {
+//                Console.WriteLine($"{fighter} defeated -->");
+//            }
+//            Console.WriteLine();
+//        }
+//    }
+//    else
+//    {
+//        Console.WriteLine("Invalid number of fighters.");
+//    }
+//}
 
 
 var showMenu = true;
