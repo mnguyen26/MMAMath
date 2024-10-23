@@ -17,15 +17,15 @@ namespace MMAMath.Operations.PathCalc
             SaveGraph();
         }
 
-        private void AddEdge(string fighter1, string fighter2, DateTime date)
+        private void AddEdge(string fighterId, FighterWinNode winNode)
         {
-            if (!_adjacencyList.ContainsKey(fighter1))
+            if (!_adjacencyList.ContainsKey(fighterId))
             {
-                _adjacencyList[fighter1] = new List<FighterWinNode>();
+                _adjacencyList[fighterId] = new List<FighterWinNode>();
             }
-            if (_adjacencyList.ContainsKey(fighter1))
+            else if (_adjacencyList.ContainsKey(fighterId))
             {
-                _adjacencyList[fighter1].Add(new FighterWinNode() { Opponent = fighter2, Date = date });
+                _adjacencyList[fighterId].Add(new FighterWinNode() { Name=winNode.Name, Opponent=winNode.Opponent, Date=winNode.Date });
             }
         }
 
@@ -36,23 +36,23 @@ namespace MMAMath.Operations.PathCalc
 
             foreach (var fight in allFights)
             {
-                if (!_adjacencyList.ContainsKey(fight.FighterA))
+                if (!_adjacencyList.ContainsKey(fight.FighterAId))
                 {
-                    _adjacencyList[fight.FighterA] = new List<FighterWinNode>();
+                    _adjacencyList[fight.FighterAId] = new List<FighterWinNode>();
                 }
 
-                if (!_adjacencyList.ContainsKey(fight.FighterB))
+                if (!_adjacencyList.ContainsKey(fight.FighterBId))
                 {
-                    _adjacencyList[fight.FighterB] = new List<FighterWinNode>();
+                    _adjacencyList[fight.FighterBId] = new List<FighterWinNode>();
                 }
 
                 if (fight.FighterAResult == "W")
                 {
-                    AddEdge(fight.FighterA, fight.FighterB, fight.Date);
+                    AddEdge(fight.FighterAId, new FighterWinNode { Name=fight.FighterA, Opponent=fight.FighterB, Date=fight.Date });
                 }
                 if (fight.FighterBResult == "W")
                 {
-                    AddEdge(fight.FighterB, fight.FighterA, fight.Date);
+                    AddEdge(fight.FighterBId, new FighterWinNode { Name = fight.FighterB, Opponent = fight.FighterA, Date = fight.Date });
                 }
             }
         }

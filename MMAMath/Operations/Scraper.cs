@@ -4,6 +4,7 @@ using HtmlAgilityPack;
 using Newtonsoft.Json;
 
 using MMAMath.Models;
+using System.Text.RegularExpressions;
 
 namespace MMAMath.Operations.Scraper
 {
@@ -149,12 +150,20 @@ namespace MMAMath.Operations.Scraper
                     var fighterNodes = li.SelectNodes(".//div[contains(@class, 'md:flex') and (contains(@class, 'order-1') or contains(@class, 'order-2'))]/a");
                     string fighterA = "";
                     string fighterB = "";
+                    string fighterAId = "";
+                    string fighterBId = "";
                     if (fighterNodes != null)
                     {
                         var fighterNames = new HashSet<string>();
+                        var fighterIds = new HashSet<string>();
                         foreach (var node in fighterNodes)
                         {
                             fighterNames.Add(node.InnerText.Trim());
+
+                            var href = node.GetAttributeValue("href", "");
+                            var fighterId = "";
+                            fighterId = Regex.Match(href, @"fighters/([^/]+)").Groups[1].Value;
+                            fighterIds.Add(fighterId);
                         }
 
                         if (fighterNames.Count == 2)
@@ -162,6 +171,11 @@ namespace MMAMath.Operations.Scraper
                             var fighterList = fighterNames.ToList();
                             fighterA = fighterList[0];
                             fighterB = fighterList[1];
+
+                            var fighterIdList = fighterIds.ToList();
+                            fighterAId = fighterIdList[0];
+                            fighterBId = fighterIdList[1];
+
                         }
                     }
 
@@ -202,6 +216,8 @@ namespace MMAMath.Operations.Scraper
                     {
                         FighterA = fighterA,
                         FighterB = fighterB,
+                        FighterAId = fighterAId,
+                        FighterBId = fighterBId,
                         FighterAResult = fighterAResult,
                         FighterBResult = fighterBResult,
                         Method = method,

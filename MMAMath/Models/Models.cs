@@ -17,6 +17,8 @@ namespace MMAMath.Models
     {
         public required string FighterA { get; set; }
         public required string FighterB { get; set; }
+        public required string FighterAId { get; set; }
+        public required string FighterBId { get; set; }
         public required string FighterAResult { get; set; }
         public required string FighterBResult { get; set; }
         public required string Method { get; set; }
@@ -63,6 +65,7 @@ namespace MMAMath.Models
 
     public class FighterWinNode
     {
+        public string Name { get; set; }
         public string Opponent { get; set; }
         public DateTime Date { get; set; }
     }
