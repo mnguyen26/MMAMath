@@ -25,7 +25,7 @@ namespace MMAMath.Operations.PathCalc
             }
             else if (_adjacencyList.ContainsKey(fighterId))
             {
-                _adjacencyList[fighterId].Add(new FighterWinNode() { Name=winNode.Name, Opponent=winNode.Opponent, Date=winNode.Date });
+                _adjacencyList[fighterId].Add(new FighterWinNode() { Name=winNode.Name, Opponent=winNode.Opponent, OpponentId=winNode.OpponentId, Date=winNode.Date });
             }
         }
 
@@ -48,11 +48,11 @@ namespace MMAMath.Operations.PathCalc
 
                 if (fight.FighterAResult == "W")
                 {
-                    AddEdge(fight.FighterAId, new FighterWinNode { Name=fight.FighterA, Opponent=fight.FighterB, Date=fight.Date });
+                    AddEdge(fight.FighterAId, new FighterWinNode { Name=fight.FighterA, Opponent=fight.FighterB, OpponentId=fight.FighterBId, Date=fight.Date });
                 }
                 if (fight.FighterBResult == "W")
                 {
-                    AddEdge(fight.FighterBId, new FighterWinNode { Name = fight.FighterB, Opponent = fight.FighterA, Date = fight.Date });
+                    AddEdge(fight.FighterBId, new FighterWinNode { Name=fight.FighterB, Opponent=fight.FighterA, OpponentId=fight.FighterAId, Date=fight.Date });
                 }
             }
         }
@@ -64,63 +64,5 @@ namespace MMAMath.Operations.PathCalc
 
             File.WriteAllText(filePath, jsonString);
         }
-
-        //public List<string> FindShortestPath(string startFighter, string targetFighter)
-        //{
-        //    if (!_adjacencyList.ContainsKey(startFighter) || !_adjacencyList.ContainsKey(targetFighter))
-        //    {
-        //        return null;
-        //    }
-
-        //    Queue<List<string>> queue = new Queue<List<string>>();
-        //    HashSet<string> visited = new HashSet<string>();
-
-        //    queue.Enqueue(new List<string> { startFighter });
-        //    visited.Add(startFighter);
-
-        //    while (queue.Count > 0)
-        //    {
-        //        var path = queue.Dequeue();
-        //        var lastFighter = path.Last();
-
-        //        if (lastFighter == targetFighter)
-        //        {
-        //            return path;
-        //        }
-
-        //        foreach (var neighbor in _adjacencyList[lastFighter])
-        //        {
-        //            if (!visited.Contains(neighbor.Opponent))
-        //            {
-        //                visited.Add(neighbor.Opponent);
-        //                var newPath = new List<string>(path) { neighbor.Opponent };
-        //                queue.Enqueue(newPath);
-        //            }
-        //        }
-        //    }
-
-        //    return null;
-        //}
-
-        //public List<List<string>> MapConnectedHighestElo(string startFighter, int numFighters)
-        //{
-        //    var highestEloPaths = new List<List<string>>();
-
-        //    string jsonString = File.ReadAllText(_fighterPeakEloPath);
-        //    var fightersPeakElo = JsonSerializer.Deserialize<Dictionary<string, FighterPeakEloDetails>>(jsonString);
-
-        //    foreach(string fighter in fightersPeakElo.Keys)
-        //    {
-        //        var path = FindShortestPath(startFighter, fighter);
-        //        if (path != null)
-        //        {
-        //            highestEloPaths.Add(path);
-        //            numFighters--;
-        //        }
-        //        if (numFighters == 0) { break; }
-        //    }
-
-        //    return highestEloPaths;
-        //}
     }
 }

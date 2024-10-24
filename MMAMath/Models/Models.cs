@@ -69,6 +69,7 @@ namespace MMAMath.Models
     {
         public string Name { get; set; }
         public string Opponent { get; set; }
+        public string OpponentId { get; set; }
         public DateTime Date { get; set; }
     }
 
