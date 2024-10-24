@@ -116,17 +116,17 @@ namespace MMAMath.Operations.EloCalculate
             {
                 if (currFight.FighterAResult == "W" || currFight.FighterAResult == "L" || currFight.FighterAResult == "D")
                 {
-                    bool fighterAFirstFight = !_allFightersEloTable.ContainsKey(currFight.FighterA);
-                    bool fighterBFirstFight = !_allFightersEloTable.ContainsKey(currFight.FighterB);
+                    bool fighterAFirstFight = !_allFightersEloTable.ContainsKey(currFight.FighterAId);
+                    bool fighterBFirstFight = !_allFightersEloTable.ContainsKey(currFight.FighterBId);
 
                     var fighterACurrElo = fighterAFirstFight ? 1000
-                            : _allFightersEloTable[currFight.FighterA][_allFightersEloTable[currFight.FighterA].Count-1].Elo;
+                            : _allFightersEloTable[currFight.FighterAId][_allFightersEloTable[currFight.FighterAId].Count-1].Elo;
                     var fighterBCurrElo = (fighterBFirstFight) ? 1000
-                            : _allFightersEloTable[currFight.FighterB][_allFightersEloTable[currFight.FighterB].Count-1].Elo;
+                            : _allFightersEloTable[currFight.FighterBId][_allFightersEloTable[currFight.FighterBId].Count-1].Elo;
 
                     if (fighterAFirstFight)
                     {
-                        _allFightersEloTable.Add(currFight.FighterA, new List<FighterEloRow>
+                        _allFightersEloTable.Add(currFight.FighterAId, new List<FighterEloRow>
                         {
                             new FighterEloRow
                             {
@@ -143,7 +143,7 @@ namespace MMAMath.Operations.EloCalculate
                     }
                     if (fighterBFirstFight)
                     {
-                        _allFightersEloTable.Add(currFight.FighterB, new List<FighterEloRow>
+                        _allFightersEloTable.Add(currFight.FighterBId, new List<FighterEloRow>
                         {
                             new FighterEloRow
                             {
@@ -161,8 +161,8 @@ namespace MMAMath.Operations.EloCalculate
 
                     var newElos = CalculateElo(fighterACurrElo, fighterBCurrElo, currFight.FighterAResult, currFight.FighterBResult, currFight.Method);
 
-                    var lastFightA = _allFightersEloTable[currFight.FighterA][_allFightersEloTable[currFight.FighterA].Count-1];
-                    _allFightersEloTable[currFight.FighterA].Add(new FighterEloRow
+                    var lastFightA = _allFightersEloTable[currFight.FighterAId][_allFightersEloTable[currFight.FighterAId].Count-1];
+                    _allFightersEloTable[currFight.FighterAId].Add(new FighterEloRow
                     {
                         Name = currFight.FighterA,
                         Opponent = currFight.FighterB,
@@ -174,8 +174,8 @@ namespace MMAMath.Operations.EloCalculate
                         Elo = newElos[0]
                     });
 
-                    var lastFightB = _allFightersEloTable[currFight.FighterB][_allFightersEloTable[currFight.FighterB].Count-1];
-                    _allFightersEloTable[currFight.FighterB].Add(new FighterEloRow
+                    var lastFightB = _allFightersEloTable[currFight.FighterBId][_allFightersEloTable[currFight.FighterBId].Count-1];
+                    _allFightersEloTable[currFight.FighterBId].Add(new FighterEloRow
                     {
                         Name = currFight.FighterB,
                         Opponent = currFight.FighterA,
@@ -203,6 +203,7 @@ namespace MMAMath.Operations.EloCalculate
 
                 var fighterPeakEloDetails = new FighterPeakEloDetails
                 {
+                    Name = fighterPeakElo.Name,
                     Elo = fighterPeakElo.Elo,
                     Date = fighterPeakElo.Date,
                     Wins = fighterPeakElo.Wins,
@@ -210,7 +211,7 @@ namespace MMAMath.Operations.EloCalculate
                     Draws = fighterPeakElo.Draws,
                     LastOpp = fighterPeakElo.Opponent,
                 };
-                fighterPeakEloTable.Add(fighterPeakElo.Name, fighterPeakEloDetails);
+                fighterPeakEloTable.Add(fighter.Key, fighterPeakEloDetails);
             }
 
             var orderedElo = fighterPeakEloTable.OrderByDescending(t => t.Value.Elo).ToDictionary(t => t.Key, t => t.Value);

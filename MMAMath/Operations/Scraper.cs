@@ -45,47 +45,53 @@ namespace MMAMath.Operations.Scraper
 
             var web = new HtmlWeb();
             var document = web.Load(url);
-            var sections = document.DocumentNode.SelectNodes("//section[contains(@class, 'fcListing')]");
+            var sections = document.DocumentNode.SelectNodes("//div[contains(@class, 'flex') and contains(@class, 'flex-col') and contains(@class, 'border-b') and contains(@class, 'border-solid')]");
+
 
             if (sections.Count > 0)
             {
-                foreach (var section in sections)
+                var reversedSections = sections.Cast<HtmlNode>().Reverse().ToList();
+                foreach (var section in reversedSections)
                 {
-                    var promotionNode = section.SelectSingleNode(".//div[@class='promotion']//span[@class='name']/a");
-                    string promotionName = promotionNode.InnerText.Trim();
+                    var linkNode = section.SelectSingleNode(".//a[@href and contains(@href, '/fightcenter/events')]");
+                    var longDateNode = section.SelectSingleNode(".//span[contains(@class, 'md:inline') and contains(@class, 'hidden') and not(contains(@class, 'md:hidden')) and not(contains(@class, 'font-bold'))]");
 
-                    string eventLink = promotionNode.GetAttributeValue("href", string.Empty);
-                    if (!string.IsNullOrEmpty(eventLink))
+                    if (linkNode != null)
                     {
-                        eventLink = new Uri(new Uri("https://www.tapology.com/"), eventLink).ToString();
+                        var eventLink = linkNode.GetAttributeValue("href", "");
+                        eventLink = $"https://www.tapology.com{eventLink}";
+
+                        var eventName = linkNode.InnerText.Trim();
+
+                        var longDate = longDateNode?.InnerText.Trim();
+                        longDate = Regex.Replace(longDate, @"\s{2,}", " ");
+                        longDate = longDate.Replace(" ET", "");
+
+                        DateTime eventDate = new DateTime();
+                        try
+                        {
+                            eventDate = DateTime.ParseExact(longDate, "dddd, MMMM d, yyyy", CultureInfo.InvariantCulture);
+                        }
+                        catch
+                        {
+                            // some recent events do not include year
+                            Thread.Sleep(1000);
+                            eventDate = GetDateFromEventPage(eventLink);
+                        }
+
+                        var eventDetails = new EventDetails
+                        {
+                            Name = eventName,
+                            Date = eventDate,
+                            Link = eventLink
+                        };
+
+                        eventList.Add(eventDetails);
                     }
 
-                    var dateNode = section.SelectSingleNode(".//div[@class='promotion']//span[@class='datetime']");
-                    string eventDateStr = dateNode.InnerText.Trim();
-                    DateTime eventDate = new DateTime();
-                    try
-                    {
-                        eventDate = DateTime.ParseExact(eventDateStr, "dddd, MMMM dd, yyyy", CultureInfo.InvariantCulture);
-                    }
-                    catch
-                    {
-                        Thread.Sleep(1000);
-                        eventDate = GetDateFromEventPage(eventLink);
-                    }
-
-
-                    var eventDetails = new EventDetails
-                    {
-                        Name = promotionName,
-                        Date = eventDate,
-                        Link = eventLink
-                    };
-
-                    eventList.Add(eventDetails);
                 }
 
             }
-
             return eventList;
         }
 
@@ -96,10 +102,11 @@ namespace MMAMath.Operations.Scraper
 
             var dateTimeNode = document.DocumentNode.SelectSingleNode("//li[span[contains(text(), 'Date/Time:')]]/span[2]");
             var dateTimeString = dateTimeNode?.InnerText.Trim();
+            dateTimeString = dateTimeString.Replace(" ET", "");
             DateTime eventDateTime;
             try
             {
-                eventDateTime = DateTime.ParseExact(dateTimeString, "dddd MM.dd.yyyy 'at' hh:mm tt ET", CultureInfo.InvariantCulture, DateTimeStyles.None);
+                eventDateTime = DateTime.ParseExact(dateTimeString, "dddd MM.dd.yyyy 'at' hh:mm tt", CultureInfo.InvariantCulture, DateTimeStyles.None);
             }
             catch
             {
@@ -245,7 +252,6 @@ namespace MMAMath.Operations.Scraper
             }
         }
 
-        //MMN fix Bruno Silva
         private static List<FightDetails> GetAllFights(List<EventDetails> events)
         {
             List<FightDetails> allFights = new List<FightDetails>();
@@ -254,7 +260,7 @@ namespace MMAMath.Operations.Scraper
             int i = 0;
             foreach (var currEvent in eventsSorted)
             {
-                if (new DateTime (2024, 07, 20) < currEvent.Date && currEvent.Date < DateTime.UtcNow)
+                if (currEvent.Date < DateTime.UtcNow)
                 {
                     Thread.Sleep(1000);
                     allFights.AddRange(GetFightsFromPage(currEvent.Link, currEvent.Date));

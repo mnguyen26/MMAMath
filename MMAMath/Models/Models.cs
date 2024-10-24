@@ -30,6 +30,7 @@ namespace MMAMath.Models
             {
                 var fighters = new[] { FighterA, FighterB }.OrderBy(f => f).ToArray();
                 string idString = $"{fighters[0]}_{fighters[1]}_{Date:yyyy-MM-dd}";
+                idString = idString.Replace(" ", "-");
                 return idString;
             }
         }
@@ -49,6 +50,7 @@ namespace MMAMath.Models
 
     public class FighterPeakEloDetails
     {
+        public string Name { get; set; }
         public int Elo { get; set; }
         public DateTime? Date { get; set; }
         public int Wins { get; set; }
