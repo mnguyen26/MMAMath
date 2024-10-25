@@ -7,11 +7,13 @@ namespace MMAMath.Operations.PathCalc
     {
         private string _allFightsJSONPath;
         private Dictionary<string, List<FighterWinNode>> _adjacencyList;
+        private Dictionary<string, string> _fighterIdNameMap;
 
         public PathCalc(string allFightsJSONPath, string fighterPeakEloPath)
         {
             _allFightsJSONPath = allFightsJSONPath;
             _adjacencyList = new Dictionary<string, List<FighterWinNode>>();
+            _fighterIdNameMap = new Dictionary<string, string>();
 
             BuildGraph();
             SaveGraph();
@@ -39,11 +41,13 @@ namespace MMAMath.Operations.PathCalc
                 if (!_adjacencyList.ContainsKey(fight.FighterAId))
                 {
                     _adjacencyList[fight.FighterAId] = new List<FighterWinNode>();
+                    _fighterIdNameMap[fight.FighterAId] = fight.FighterA;
                 }
 
                 if (!_adjacencyList.ContainsKey(fight.FighterBId))
                 {
                     _adjacencyList[fight.FighterBId] = new List<FighterWinNode>();
+                    _fighterIdNameMap[fight.FighterBId] = fight.FighterB;
                 }
 
                 if (fight.FighterAResult == "W")
@@ -63,6 +67,11 @@ namespace MMAMath.Operations.PathCalc
             string jsonString = System.Text.Json.JsonSerializer.Serialize(_adjacencyList, new JsonSerializerOptions { WriteIndented = true });
 
             File.WriteAllText(filePath, jsonString);
+
+            filePath = Path.Combine(AppContext.BaseDirectory, "fighter_id_name_map.json");
+            jsonString = System.Text.Json.JsonSerializer.Serialize(_fighterIdNameMap, new JsonSerializerOptions { WriteIndented = true }) ;
+
+            File.WriteAllText(filePath , jsonString);
         }
     }
 }

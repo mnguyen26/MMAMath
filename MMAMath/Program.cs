@@ -64,61 +64,6 @@ void GenerateWinGraph()
     var pathCalc = new PathCalc(fightsPath, "");
 }
 
-//void FindShortestPath()
-//{
-//    Console.WriteLine("Enter path for ufc_fights.json:");
-//    var fightsPath = Console.ReadLine();
-//    var pathCalc = new PathCalc(fightsPath, "");
-//    Console.WriteLine("Enter first fighter:");
-//    var fighter1 = Console.ReadLine();
-//    Console.WriteLine("Enter second fighter:");
-//    var fighter2 = Console.ReadLine();
-
-//    var shortestPath = pathCalc.FindShortestPath(fighter1, fighter2);
-//    if (shortestPath != null)
-//    {
-//        foreach (var fighter in shortestPath)
-//        {
-//            Console.WriteLine($"{fighter} beat -->");
-//        }
-//    }
-//    else
-//    {
-//        Console.WriteLine("No path found.");
-//    }
-//}
-
-//void FindPathsToHighestElo()
-//{
-//    Console.WriteLine("Enter path for ufc_fights.json:");
-//    var allFightsPath = Console.ReadLine();
-//    Console.WriteLine("Enter path for fighter_peak_elo_records.json:");
-//    var fightersPeakElo = Console.ReadLine();
-//    var pathCalc = new PathCalc(allFightsPath, fightersPeakElo);
-
-//    Console.WriteLine("Enter start fighter:");
-//    var startFighter = Console.ReadLine();
-//    Console.WriteLine("Enter number of fighters to connect:");
-    
-//    if (int.TryParse(Console.ReadLine(), out int numFighters))
-//    {
-//        var result = pathCalc.MapConnectedHighestElo(startFighter, numFighters);
-//        foreach (var path in result)
-//        {
-//            foreach (var fighter in path)
-//            {
-//                Console.WriteLine($"{fighter} defeated -->");
-//            }
-//            Console.WriteLine();
-//        }
-//    }
-//    else
-//    {
-//        Console.WriteLine("Invalid number of fighters.");
-//    }
-//}
-
-
 var showMenu = true;
 while (showMenu)
 {
