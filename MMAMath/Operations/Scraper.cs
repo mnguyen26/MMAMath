@@ -260,6 +260,7 @@ namespace MMAMath.Operations.Scraper
             int i = 0;
             foreach (var currEvent in eventsSorted)
             {
+                //if (new DateTime(2024, 03, 30) < currEvent.Date && currEvent.Date < DateTime.UtcNow)
                 if (currEvent.Date < DateTime.UtcNow)
                 {
                     Thread.Sleep(1000);
