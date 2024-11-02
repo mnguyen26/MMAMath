@@ -27,7 +27,7 @@ namespace MMAMath.Operations.PathCalc
             }
             else if (_adjacencyList.ContainsKey(fighterId))
             {
-                _adjacencyList[fighterId].Add(new FighterWinNode() { Name=winNode.Name, Opponent=winNode.Opponent, OpponentId=winNode.OpponentId, Date=winNode.Date });
+                _adjacencyList[fighterId].Add(new FighterWinNode() { Name=winNode.Name, Opponent=winNode.Opponent, OpponentId=winNode.OpponentId, Date=winNode.Date, Method=winNode.Method });
             }
         }
 
@@ -36,7 +36,7 @@ namespace MMAMath.Operations.PathCalc
             string jsonString = File.ReadAllText(_allFightsJSONPath);
             var allFights = JsonSerializer.Deserialize<List<FightDetails>>(jsonString);
 
-            foreach (var fight in allFights)
+            foreach (FightDetails fight in allFights)
             {
                 if (!_adjacencyList.ContainsKey(fight.FighterAId))
                 {
@@ -52,11 +52,11 @@ namespace MMAMath.Operations.PathCalc
 
                 if (fight.FighterAResult == "W")
                 {
-                    AddEdge(fight.FighterAId, new FighterWinNode { Name=fight.FighterA, Opponent=fight.FighterB, OpponentId=fight.FighterBId, Date=fight.Date });
+                    AddEdge(fight.FighterAId, new FighterWinNode { Name=fight.FighterA, Opponent=fight.FighterB, OpponentId=fight.FighterBId, Date=fight.Date, Method=fight.Method });
                 }
                 if (fight.FighterBResult == "W")
                 {
-                    AddEdge(fight.FighterBId, new FighterWinNode { Name=fight.FighterB, Opponent=fight.FighterA, OpponentId=fight.FighterAId, Date=fight.Date });
+                    AddEdge(fight.FighterBId, new FighterWinNode { Name=fight.FighterB, Opponent=fight.FighterA, OpponentId=fight.FighterAId, Date=fight.Date, Method=fight.Method });
                 }
             }
         }
