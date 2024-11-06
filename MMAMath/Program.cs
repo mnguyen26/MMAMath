@@ -35,6 +35,9 @@ void ExecuteMenuItem(string input)
         case "5":
             GenerateWinGraph();
             break;
+        case "6":
+            GetFighterPics();
+            break;
         default:
             Console.WriteLine("Invalid choice. Try again.");
             break;
@@ -62,6 +65,11 @@ void GenerateWinGraph()
     Console.WriteLine("Enter path for ufc_fights.json");
     var fightsPath = Console.ReadLine();
     var pathCalc = new PathCalc(fightsPath, "");
+}
+
+void GetFighterPics()
+{
+    Scraper.GetAllFighterPics();
 }
 
 var showMenu = true;

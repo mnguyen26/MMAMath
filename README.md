@@ -1,20 +1,16 @@
-We all know that MMA math doesn't work in real life. If Fighter A beats Fighter B, and Fighter B beats Fighter C, it doesn’t mean Fighter A will automatically beat Fighter C. Fighting ability isn't a one-dimensional trait, and matchups can be nontransitive. Styles make fights, and we've seen rock-paper-scissors scenarios like Ronda Rousey beating Misha Tate, Holly Holm defeating Ronda Rousey, and Misha Tate beating Holly Holm (Matt Hughes, Georges St-Pierre, and B.J. Penn is another example).
+# MMA Math
 
-Because I still see this type of logic in MMA forums, this project takes the idea of MMA math to its most absurd degree. Using fight results from UFC history, I've assigned fighters Elo scores (a ranking system originally developed for chess) and built a graph that connects fighters by their wins. The project lets you find the paths (if they exists) between any given fighter and the highest-rated fighters of all time, according to peak Elo scores.
+A console application for extracting and transforming MMA data to support various projects.
 
-Assumptions & Simplifications:
+## Overview
 
-Only UFC Fights: I only tracked fights within the UFC. While it's possible to gather data from other promotions, tracing every opponent’s pre-UFC fights (and their opponents' fights, etc.) becomes impractically complex. Limiting the data to UFC fights provides a closed pool of fighters for analysis.
-Simplified Elo Calculations: Elo ratings are calculated for fun and aren't meant to reflect true rankings, especially considering factors like weight class, age, or fight context.
+MMA Math is a data extraction tool designed to collect and format MMA data for use in other applications and games. This project is not intended for direct user interaction; it extracts data from both APIs and HTML web scraping to create a dataset for MMA other projects. Currently, the data is transformed and exported into a JSON format so that it can be accessed client-side without a dedicated back-end component.
 
-Features:
+So far it's been used to extract a complete history of fights in the UFC, images of all fighters, and to calculate Elo scores for all fighters. 
 
-Fighter Elo Ratings: Assigns fighters an Elo score based on their UFC fight history.
-Shortest Path Algorithm: Finds the shortest path between two fighters based on wins.
-Highest Elo Path: Determines the path from a fighter to the highest-rated fighters by Elo.
+## Try It Out
 
-How to Use:
+The following apps make use of the data processed by MMA Math:
 
-Scrape fight data: Scrape fight and event data from the web (currently pulls from Tapology).
-Calculate Elo Scores: Automatically calculate Elo scores based on fight results.
-MMA Math Fun: Input two fighters to see the path between them or find the fighter with the highest Elo from a given fighter.
+1. https://mnguyen26.github.io/mmamathapp/ - Connect two fighters through their wins to discover the "win path."
+2. https://mnguyen26.github.io/mmablindrankings/ - A game to rank MMA fighters
