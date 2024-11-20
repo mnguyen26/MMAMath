@@ -75,6 +75,11 @@ void GenerateFights()
     Scraper.SaveFights(fightsPath);
 }
 
+void GetFighterPics()
+{
+    Scraper.GetAllFighterPics();
+}
+
 var showMenu = true;
 while (showMenu)
 {
