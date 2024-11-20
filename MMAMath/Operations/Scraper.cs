@@ -2,6 +2,7 @@
 using System.Text.Json;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 using MMAMath.Models;
 using System.Text.RegularExpressions;
@@ -357,6 +358,39 @@ namespace MMAMath.Operations.Scraper
             File.WriteAllText(filePath, jsonString);
 
             return fightersAndPics;
+        }
+
+        private static void GenerateFightsGraph (List<FightDetails> fights)
+        {
+            var fighterOpponentsMap = new Dictionary<string, List<string>>();
+
+            foreach (FightDetails fight in fights)
+            {
+                if (!fighterOpponentsMap.ContainsKey(fight.FighterAId))
+                {
+                    fighterOpponentsMap[fight.FighterAId] = new List<string>();
+                }
+                fighterOpponentsMap[fight.FighterAId].Add(fight.FighterBId);
+
+                if (!fighterOpponentsMap.ContainsKey(fight.FighterBId))
+                {
+                    fighterOpponentsMap[fight.FighterBId] = new List<string>();
+                }
+                fighterOpponentsMap[fight.FighterBId].Add(fight.FighterAId);
+            }
+
+            string filePath = Path.Combine(AppContext.BaseDirectory, "fighter_fights.json");
+            string jsonString = JsonSerializer.Serialize(fighterOpponentsMap, new JsonSerializerOptions { WriteIndented = true });
+
+            File.WriteAllText(filePath, jsonString);
+        }
+
+        public static void SaveFights(string filePath)
+        {
+            string jsonString = File.ReadAllText(filePath);
+            var allFights = JsonSerializer.Deserialize<List<FightDetails>>(jsonString);
+            
+            if (allFights != null) GenerateFightsGraph(allFights);
         }
 
         public static void SaveEvents()

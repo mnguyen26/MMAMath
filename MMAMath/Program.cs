@@ -10,6 +10,7 @@ void ShowMenu()
     Console.WriteLine("3. Calculate Elo scores");
     Console.WriteLine("4. Calculate Peak Elo Scores");
     Console.WriteLine("5. Generate Wins Graph");
+    Console.WriteLine("6. Generate fighter fights");
     Console.WriteLine("0. Exit");
     Console.WriteLine("Enter your choice:");
 }
@@ -34,6 +35,9 @@ void ExecuteMenuItem(string input)
             break;
         case "5":
             GenerateWinGraph();
+            break;
+        case "6":
+            GenerateFights();
             break;
         default:
             Console.WriteLine("Invalid choice. Try again.");
@@ -62,6 +66,13 @@ void GenerateWinGraph()
     Console.WriteLine("Enter path for ufc_fights.json");
     var fightsPath = Console.ReadLine();
     var pathCalc = new PathCalc(fightsPath, "");
+}
+
+void GenerateFights()
+{
+    Console.WriteLine("Enter path for ufc_fights.json");
+    var fightsPath = Console.ReadLine();
+    Scraper.SaveFights(fightsPath);
 }
 
 var showMenu = true;
